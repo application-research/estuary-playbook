@@ -12,7 +12,7 @@ estuary_hostname: "estuary-main:3004"
 estuary_api: "estuary-main:3004"
 
 # FIL full node location. Leave this as default unless you're running your own.
-fullnode_api: "ws://api.chain.love"
+fullnode_api: "https://api.node.glif.io/" # alt: ws://api.chain.love"
 
 # For the main service, where to store database data and other data.
 # For shuttles, where to store database data.
