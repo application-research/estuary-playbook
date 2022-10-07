@@ -1,0 +1,17 @@
+---
+- name: Install main dependencies
+  ansible.builtin.package:
+    name: git
+    state: present
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
+- name: Check out Estuary-WWW from git
+  ansible.builtin.git:
+    repo: https://github.com/application-research/estuary-www
+    dest: /usr/src/estuary-www
+
+- name: Build estuary-www
+  ansible.builtin.shell:
+    executable: /bin/bash
+    cmd: /usr/bin/npm install && /usr/bin/npm run build
+    chdir: /usr/src/estuary-www
