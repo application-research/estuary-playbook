@@ -17,6 +17,9 @@
     - "vars/estuary-settings.yml"
 
   roles:
+    - role: gantsign.golang
+      golang_gopath: '$HOME/workspace-go'
+    - fubarhouse.rust
     - main
 
 - name: Install Estuary shuttle nodes
@@ -27,6 +30,9 @@
     - "vars/estuary-settings.yml"
 
   roles:
+    - role: gantsign.golang
+      golang_gopath: '$HOME/workspace-go'
+    - fubarhouse.rust
     - shuttle
 
 - name: Install Estuary web node
@@ -37,4 +43,5 @@
     - "vars/estuary-settings.yml"
 
   roles:
+    - geerlingguy.nodejs
     - www
