@@ -2,14 +2,16 @@
 [Estuary](https://github.com/application-research/estuary) with a bit of automation magic.
 
 ## Requirements
-None.
+Install the required roles using `ansible-galaxy install -r requirements.yml`.
 
 ## Preparation
 First, we'll need some machines to run Estuary on. These can be virtual machines, LXC/LXD containers, or physical machines.
 
-* estuary-main (Debian or Ubuntu) - to run the main Estuary services
-* estuary-shuttleX (Debian, Ubuntu or Arch Linux) - one or more shuttles to store and move data to the edge of space
-* estuary-www (Debian or Ubuntu) - to run the web frontend
+Modern versions of Ubuntu and Debian are supported by this playbook; support for distros such as Arch Linux and openSuSE is being considered.
+
+* estuary-main - to run the main Estuary services
+* estuary-shuttleX - one or more shuttles to store and move data to the edge of space
+* estuary-www - to run the web frontend
 
 Once the machines have been built, you'll need to generate keys and make them trusted by either root (if logging in as root) or your user.
 
