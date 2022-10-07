@@ -1,4 +1,7 @@
 [estuary]
+estuary-main
+estuary-shuttle[1:3]
+estuary-www
 
 [estuary_main]
 estuary-main
