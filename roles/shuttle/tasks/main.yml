@@ -24,3 +24,38 @@
     creates: /usr/src/estuary/estuary
     chdir: /usr/src/estuary
     executable: /bin/bash
+
+- name: Ensure estuary private directory
+  ansible.builtin.file:
+    path: /usr/estuary/private
+    owner: root
+    group: root
+    mode: 0700
+    state: directory
+    recurse: true
+
+- name: Install Estuary token
+  copy:
+    src: secrets/token
+    dest: /usr/estuary/private/token
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Generate a shuttle token
+  ansible.builtin.shell:
+    cmd: 'curl -H "Authorization: Bearer $(cat /usr/estuary/private/token)" -X POST http://estuary-main.windowpa.in:3004/admin/shuttle/init > /usr/estuary/private/shuttle_token'
+    executable: /bin/bash
+    creates: /usr/estuary/private/shuttle_token
+
+- name: Extract shuttle token actual
+  ansible.builtin.shell:
+    cmd: "cat /usr/estuary/private/shuttle_token jq -r '.handle' > /usr/estuary/private/shuttle_token_handle"
+    executable: /bin/bash
+    creates: /usr/estuary/private/shuttle_token_handle
+
+- name: Extract shuttle token actual
+  ansible.builtin.shell:
+    cmd: "cat /usr/estuary/private/shuttle_token jq -r '.token' > /usr/estuary/private/shuttle_token_actual"
+    executable: /bin/bash
+    creates: /usr/estuary/private/shuttle_token_actual
