@@ -55,3 +55,54 @@
     src: /usr/estuary/private/token
     dest: "{{ playbook_dir }}/secrets/token"
     flat: true
+
+# Install systemd services
+# - name: Install estuary-setup oneshot service
+#   template:
+#     src: estuary-setup.service
+#     dest: /etc/systemd/system/estuary-setup.service
+#     owner: root
+#     group: root
+#     mode: 0755
+
+- name: Install estuary main service
+  template:
+    src: estuary.service
+    dest: /etc/systemd/system/estuary.service
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create config directory for estuary
+  file:
+    path: /etc/estuary
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy main config
+  template:
+    src: config.env
+    dest: /etc/estuary/config.env
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy logging config
+  template:
+    src: log.env
+    dest: /etc/estuary/log.env
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Run daemon-reload
+  command:
+    cmd: systemctl daemon-reload
+
+- name: Ensure estuary is running
+  systemd:
+    name: estuary
+    state: started
+    enabled: true
