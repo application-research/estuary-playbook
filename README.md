@@ -1,5 +1,5 @@
 # estuary-playbook
-Estuary with a bit of automation magic.
+[Estuary](https://github.com/application-research/estuary) with a bit of automation magic.
 
 ## Requirements
 None.
