@@ -7,7 +7,7 @@ User=estuary
 Group=estuary
 LimitNOFILE=infinity
 EnvironmentFile=/etc/estuary-www/config.env
-ExecStart=/bin/bash -c "/usr/bin/npm run dev-docker --estuary-api-key=$(cat /usr/estuary/private/token)"
+ExecStart=/bin/bash -c "/usr/bin/npm run dev-docker --estuary-host=${ESTUARY_HOSTNAME} --estuary-api-key=$(cat /usr/estuary/private/token)"
 WorkingDirectory=/usr/src/estuary-www
 Restart=always
 RestartSec=10
