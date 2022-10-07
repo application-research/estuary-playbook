@@ -25,14 +25,45 @@
     chdir: /usr/src/estuary
     executable: /bin/bash
 
-- name: Ensure estuary private directory
+- name: Ensure estuary top directory exists
   ansible.builtin.file:
-    path: /usr/estuary/private
-    owner: root
-    group: root
+    path: /usr/estuary
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
     mode: 0700
     state: directory
-    recurse: true
+    recurse: false
+
+- name: Ensure estuary private directory exists
+  ansible.builtin.file:
+    path: /usr/estuary/private
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
+    mode: 0700
+    state: directory
+    recurse: false
+
+- name: Create a system user for Estuary
+  ansible.builtin.user:
+    name: "{{ estuary_system_user | default('estuary') }}"
+    shell: /bin/bash
+    system: true
+
+- name: Ensure Estuary database data directory exists with correct permissions
+  ansible.builtin.file:
+    path: "{{ estuary_data }}"
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
+    mode: 0755
+    state: directory
+
+- name: Ensure Estuary Shuttle data directory exists with correct permissions
+  ansible.builtin.file:
+    path: "{{ estuary_shuttle_data }}"
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
+    mode: 0755
+    state: directory
 
 - name: Install Estuary token
   copy:
@@ -50,12 +81,54 @@
 
 - name: Extract shuttle token actual
   ansible.builtin.shell:
-    cmd: "cat /usr/estuary/private/shuttle_token jq -r '.handle' > /usr/estuary/private/shuttle_token_handle"
+    cmd: "cat /usr/estuary/private/shuttle_token | jq -r '.handle' > /usr/estuary/private/shuttle_token_handle"
     executable: /bin/bash
     creates: /usr/estuary/private/shuttle_token_handle
 
 - name: Extract shuttle token actual
   ansible.builtin.shell:
-    cmd: "cat /usr/estuary/private/shuttle_token jq -r '.token' > /usr/estuary/private/shuttle_token_actual"
+    cmd: "cat /usr/estuary/private/shuttle_token| jq -r '.token' > /usr/estuary/private/shuttle_token_actual"
     executable: /bin/bash
     creates: /usr/estuary/private/shuttle_token_actual
+
+- name: Install Estuary shuttle service
+  template:
+    src: estuary-shuttle.service
+    dest: /etc/systemd/system/estuary-shuttle.service
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create config directory for estuary shuttle
+  file:
+    path: /etc/estuary-shuttle
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Copy main config
+  template:
+    src: config.env
+    dest: /etc/estuary-shuttle/config.env
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy logging config
+  template:
+    src: log.env
+    dest: /etc/estuary-shuttle/log.env
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Run daemon-reload
+  command:
+    cmd: systemctl daemon-reload
+
+- name: Ensure estuary shuttle is running
+  systemd:
+    name: estuary-shuttle
+    state: started
+    enabled: true

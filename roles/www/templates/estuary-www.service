@@ -1,0 +1,16 @@
+[Unit]
+Description=Estuary WWW
+After=network-online.target postgresql.service
+
+[Service]
+User=estuary
+Group=estuary
+LimitNOFILE=infinity
+EnvironmentFile=/etc/estuary-www/config.env
+ExecStart=/bin/bash -c "/usr/bin/npm run dev-docker --estuary-api-key=$(cat /usr/estuary/private/token)"
+WorkingDirectory=/usr/src/estuary-www
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

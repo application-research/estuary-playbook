@@ -1,9 +1,38 @@
 ---
 # Node.JS version to use for Estuary Web
-nodejs_version: "16.x"
+nodejs_version: "14.x"
 
 # Go version to use for Estuary
 golang_version: '1.18.7'
 
-# Enable this to use PostgreSQL instead of SQLite (currently Postgres is unsupported by this playbook)
-sqlite_disabled: false
+### Estuary settings ###
+# Main service endpoint + API location.
+# This should usually be a name your main Estuary service node is reachable at, complete with port.
+estuary_hostname: "estuary-main:3004"
+estuary_api: "estuary-main:3004"
+
+# FIL full node location. Leave this as default unless you're running your own.
+fullnode_api: "ws://api.chain.love"
+
+# For the main service, where to store database data and other data.
+# For shuttles, where to store database data.
+estuary_data: "/usr/src/estuary/data"
+
+# For the shuttles, where to store non-database data
+estuary_shuttle_data: "/data/estuary"
+
+# User to run Estuary as, applies to shuttles and www only.
+estuary_system_user: "estuary"
+
+### Database settings ###
+# Enable *one* of the following database_config stanzas to set up database access.
+# SQLite is simplest but less scalable, perfect for evaluating Estuary prior to production setup.
+
+# SQLite mode settings (default)
+database_config: 'sqlite={{estuary_data}}/estuary.db'
+
+# SQLite mode with a custom storage location for the SQLite database
+#database_config: 'sqlite=/data/sqlite/estuary.db'
+
+# PostgreSQL mode settings
+#database_config: 'postgres=host=127.0.0.1 user= password= dbname='
