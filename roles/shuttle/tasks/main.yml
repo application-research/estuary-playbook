@@ -1,0 +1,26 @@
+---
+- name: Install main dependencies
+  ansible.builtin.package:
+    name:
+      - wget
+      - jq
+      - hwloc
+      - ocl-icd-opencl-dev
+      - git
+      - libhwloc-dev
+      - pkg-config
+    state: present
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
+- name: Check out Estuary from git
+  ansible.builtin.git:
+    repo: https://github.com/application-research/estuary
+    dest: /usr/src/estuary
+
+- name: Compile Estuary
+  shell:
+    # We force golang and bashrc to load, otherwise Rust and Go won't work.
+    cmd: source /etc/profile.d/golang.sh ; source /root/.cargo/env ; RUSTFLAGS="-C target-cpu=native -g" FFI_BUILD_FROM_SOURCE=1 make all
+    creates: /usr/src/estuary/estuary
+    chdir: /usr/src/estuary
+    executable: /bin/bash

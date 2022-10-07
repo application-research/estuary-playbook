@@ -1,13 +1,13 @@
 ---
 # Install build tools
 - name: Install build-essential (Ubuntu and Debian)
-  package:
+  ansible.builtin.package:
     name: build-essential
     state: present
   when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
 
 - name: Install base-devel (Arch Linux)
-  package:
+  ansible.builtin.package:
     name: base-devel
     state: present
   when: ansible_distribution == "Archlinux"

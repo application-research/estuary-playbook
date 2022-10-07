@@ -1,0 +1,57 @@
+---
+- name: Install main dependencies
+  package:
+    name:
+      - wget
+      - jq
+      - hwloc
+      - ocl-icd-opencl-dev
+      - git
+      - libhwloc-dev
+      - pkg-config
+    state: present
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
+- name: Check out Estuary from git
+  ansible.builtin.git:
+    repo: https://github.com/application-research/estuary
+    dest: /usr/src/estuary
+
+- name: Compile Estuary
+  ansible.builtin.shell:
+    # We force golang and cargo to load, otherwise Rust and Go won't work.
+    cmd: . /etc/profile.d/golang.sh ; . "/root/.cargo/env" ; RUSTFLAGS="-C target-cpu=native -g" FFI_BUILD_FROM_SOURCE=1 make all
+    creates: /usr/src/estuary/estuary
+    chdir: /usr/src/estuary
+    executable: /bin/bash
+
+# Initialize main node
+- name: Ensure estuary data directory
+  ansible.builtin.file:
+    path: /usr/src/estuary/data/
+    owner: root
+    group: root
+    mode: 0750
+    state: directory
+- name: Ensure estuary private directory
+  ansible.builtin.file:
+    path: /usr/estuary/private
+    owner: root
+    group: root
+    mode: 0700
+    state: directory
+    recurse: true
+- name: Get and store estuary token
+  ansible.builtin.shell:
+    cmd: /usr/src/estuary/estuary setup --username admin --password Password123 | grep Token | cut -d ' ' -f 3 > /usr/estuary/private/token
+    creates: /usr/src/estuary/data/estuary.db
+    executable: /bin/bash
+    chdir: /usr/src/estuary/data/
+
+# We save the estuary token we just generated in the playbook dir on the Ansible Controller host for now.
+# This is not necessarily a super safe way to do it but works for demo purposes. Caveat emptor.
+- name: Retrieve estuary token
+  fetch:
+    src: /usr/estuary/private/token
+    dest: "{{ playbook_dir }}/secrets/token"
+    flat: true
