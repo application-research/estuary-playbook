@@ -17,6 +17,11 @@ Once the machines have been built, you'll need to generate keys and make them tr
 
 If you'll be able to reach those machines via DNS without specifically needing to add a domain name (to turn the hostnames into FQDNs, in other words), you're now ready to go. Otherwise, edit `inventory` to suit.
 
+## Configuration
+Edit `vars/estuary-settings.yml` and adjust any settings you need to adjust.
+
+Make sure any hostnames used in the configuration are reachable via ping or a similar tool.
+
 ## Usage
 Installing Estuary:
 * Run `ansible-playbook site.yml`
