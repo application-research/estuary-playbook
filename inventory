@@ -1,0 +1,10 @@
+[estuary]
+
+[estuary_main]
+estuary-main
+
+[estuary_shuttle]
+estuary-shuttle[1:3]
+
+[estuary_www]
+estuary-www

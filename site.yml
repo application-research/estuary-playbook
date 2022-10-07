@@ -1,0 +1,40 @@
+---
+- name: Install base Estuary requirements
+  hosts: estuary
+  become: true
+
+  vars_files:
+    - "vars/estuary-settings.yml"
+
+  roles:
+    - estuary
+
+- name: Install Estuary main node
+  hosts: estuary_main
+  become: true
+
+  vars_files:
+    - "vars/estuary-settings.yml"
+
+  roles:
+    - main
+
+- name: Install Estuary shuttle nodes
+  hosts: estuary_shuttle
+  become: true
+
+  vars_files:
+    - "vars/estuary-settings.yml"
+
+  roles:
+    - shuttle
+
+- name: Install Estuary web node
+  hosts: estuary_www
+  become: true
+
+  vars_files:
+    - "vars/estuary-settings.yml"
+
+  roles:
+    - www
