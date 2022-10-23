@@ -44,7 +44,7 @@
 - name: Get and store estuary token
   ansible.builtin.shell:
     cmd: /usr/src/estuary/estuary setup --username admin --password Password123 | grep Token | cut -d ' ' -f 3 > /usr/estuary/private/token
-    creates: /usr/src/estuary/data/estuary.db
+    creates: /usr/estuary/private/token
     executable: /bin/bash
     chdir: /usr/src/estuary/data/
 
