@@ -56,15 +56,6 @@
     dest: "{{ playbook_dir }}/secrets/token"
     flat: true
 
-# Install systemd services
-# - name: Install estuary-setup oneshot service
-#   template:
-#     src: estuary-setup.service
-#     dest: /etc/systemd/system/estuary-setup.service
-#     owner: root
-#     group: root
-#     mode: 0755
-
 - name: Install estuary main service
   ansible.builtin.template:
     src: estuary.service
