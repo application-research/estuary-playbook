@@ -29,13 +29,16 @@ estuary_system_user: "estuary"
 # SQLite is simplest but less scalable, perfect for evaluating Estuary prior to production setup.
 
 # SQLite mode settings (default)
-database_config: 'sqlite={{estuary_data}}/estuary.db'
+#database_config: 'sqlite={{estuary_data}}/estuary.db'
+#database_config_shuttle: 'sqlite={{estuary_data}}/estuary.db'
 
 # SQLite mode with a custom storage location for the SQLite database
 #database_config: 'sqlite=/data/sqlite/estuary.db'
+#database_config_shuttle: 'sqlite=/data/sqlite/estuary.db'
 
 # PostgreSQL mode settings
-#database_config: 'postgres=host=127.0.0.1 user= password= dbname='
+database_config: 'postgres=host=127.0.0.1 user=estuary_api password= dbname=estuary_api'
+database_config_shuttle: 'postgres=host=127.0.0.1 user=estuary_shuttle password= dbname=estuary_shuttle'
 
 # Trigger postgres installation by setting this to true if needed.
 install_postgresql: false
