@@ -22,6 +22,12 @@ Edit `vars/estuary-settings.yml` and adjust any settings you need to adjust.
 
 Make sure any hostnames used in the configuration are reachable via ping or a similar tool.
 
+Copy `vars/secrets.yml.dist` to `vars/secrets.yml`
+
+`cp vars/secrets.yml.dist vars/secrets.yml`
+
+Edit your new secrets.yml file and set passwords for PostgreSQL (skip this step if you're using SQLite).
+
 ## Usage
 Installing Estuary:
 * Run `ansible-playbook site.yml`
