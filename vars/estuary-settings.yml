@@ -36,3 +36,6 @@ database_config: 'sqlite={{estuary_data}}/estuary.db'
 
 # PostgreSQL mode settings
 #database_config: 'postgres=host=127.0.0.1 user= password= dbname='
+
+# Trigger postgres installation by setting this to true if needed.
+install_postgresql: false

@@ -20,6 +20,9 @@
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
     - zorlin.rust
+    - role: geerlingguy.postgresql
+      become: true
+      when: install_postgresql
     - main
 
 - name: Install Estuary shuttle nodes
@@ -33,6 +36,9 @@
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
     - zorlin.rust
+    - role: geerlingguy.postgresql
+      become: true
+      when: install_postgresql
     - shuttle
 
 - name: Install Estuary web node

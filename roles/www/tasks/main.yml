@@ -72,7 +72,7 @@
     mode: 0755
 
 - name: Create config directory for estuary www
-  file:
+  ansible.builtin.file:
     path: /etc/estuary-www
     state: directory
     owner: root
@@ -80,7 +80,7 @@
     mode: 0755
 
 - name: Copy main config
-  template:
+  ansible.builtin.template:
     src: config.env
     dest: /etc/estuary-www/config.env
     owner: root
@@ -88,11 +88,11 @@
     mode: 0644
 
 - name: Run daemon-reload
-  command:
+  ansible.builtin.command:
     cmd: systemctl daemon-reload
 
 - name: Ensure estuary www is running
-  systemd:
+  ansible.builtin.systemd:
     name: estuary-www
     state: started
     enabled: true

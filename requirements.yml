@@ -2,6 +2,8 @@
 roles:
   - name: geerlingguy.nodejs
     version: 6.1.0
+  - name: geerlingguy.postgresql
+    version: 3.4.1
   - name: gantsign.golang
     version: 3.0.2
   - name: zorlin.rust
