@@ -37,7 +37,7 @@ database_config_shuttle: 'sqlite={{estuary_data}}/estuary.db'
 #database_config_shuttle: 'sqlite=/data/sqlite/estuary.db'
 
 # PostgreSQL mode settings
-database_config: 'postgres=host=127.0.0.1 user=estuary_api password={{ estuary_database_password }} dbname=estuary_api'
+database_config: 'postgres=host={{ estuary_database_host }} user={{ estuary_database_user }} password={{ estuary_database_password }} dbname={{ estuary_database_name }}'
 #database_config_shuttle: 'postgres=host=127.0.0.1 user=estuary_shuttle password={{ estuary_shuttle_database_password }} dbname=estuary_shuttle'
 
 # Trigger postgres installation by setting this to true if needed.
