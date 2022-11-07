@@ -43,7 +43,7 @@
     recurse: true
 - name: Get and store estuary token
   ansible.builtin.shell:
-    cmd: /usr/src/estuary/estuary setup --database {{ database_config }} --username admin --password Password123 | grep Token | cut -d ' ' -f 3 > /usr/estuary/private/token
+    cmd: /usr/src/estuary/estuary setup --database="{{ database_config }}" --username admin --password Password123 | grep Token | cut -d ' ' -f 3 > /usr/estuary/private/token
     creates: /usr/estuary/private/token
     executable: /bin/bash
     chdir: /usr/src/estuary/data/
