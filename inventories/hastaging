@@ -1,0 +1,18 @@
+[estuary]
+api-staging-api01 ansible_host=139.178.86.35
+api-staging-api02 ansible_host=139.178.86.53
+api-staging-api03 ansible_host=139.178.86.3
+
+[estuary_main]
+api-staging-api01 ansible_host=139.178.86.35
+api-staging-api02 ansible_host=139.178.86.53
+api-staging-api03 ansible_host=139.178.86.3
+
+[estuary_shuttle]
+
+[estuary_www]
+
+[loadbalancer]
+api-staging-lb01 ansible_host=147.28.182.121
+api-staging-lb02 ansible_host=147.28.182.97
+api-staging-lb03 ansible_host=147.28.182.99
