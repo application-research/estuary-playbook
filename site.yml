@@ -1,4 +1,15 @@
 ---
+- name: HACK - Install loadbalancer nodes - wings needs to add tags :)
+  hosts: loadbalancer
+  become: true
+
+  vars_files:
+    - "vars/secrets.yml"
+    - "vars/estuary-settings.yml"
+
+  roles:
+    - haproxy
+
 - name: Install base Estuary requirements
   hosts: estuary
   become: true
