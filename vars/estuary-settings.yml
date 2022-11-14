@@ -31,7 +31,7 @@ estuary_system_user: "estuary"
 
 # SQLite mode settings (default)
 #database_config: 'sqlite={{estuary_data}}/estuary.db'
-database_config_shuttle: 'sqlite={{estuary_data}}/estuary.db'
+database_config_shuttle: 'sqlite={{estuary_shuttle_data}}/estuary.db'
 
 # SQLite mode with a custom storage location for the SQLite database
 #database_config: 'sqlite=/data/sqlite/estuary.db'
