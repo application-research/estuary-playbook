@@ -16,6 +16,7 @@
   ansible.builtin.git:
     repo: https://github.com/application-research/estuary
     dest: /usr/src/estuary
+    version: v0.1.10
 
 - name: Compile Estuary
   ansible.builtin.shell:
