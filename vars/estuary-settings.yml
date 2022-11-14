@@ -8,18 +8,19 @@ golang_version: '1.18.7'
 ### Estuary settings ###
 # Main service endpoint + API location.
 # This should usually be a name your main Estuary service node is reachable at, complete with port.
-estuary_hostname: "estuary-main:3004"
-estuary_api: "estuary-main:3004"
+estuary_hostname: "https://api.haapi.tech"
+estuary_api: "0.0.0.0:3004"
 
 # FIL full node location. Leave this as default unless you're running your own.
 fullnode_api: "https://api.node.glif.io/" # alt: ws://api.chain.love"
 
 # For the main service, where to store database data and other data.
 # For shuttles, where to store database data.
-estuary_data: "/usr/src/estuary/data"
+#estuary_data: "/usr/src/estuary/data"
+estuary_data: "/api/estuary/data"
 
 # For the shuttles, where to store non-database data
-estuary_shuttle_data: "/data/estuary"
+estuary_shuttle_data: "/shuttle/estuary/data"
 
 # User to run Estuary as, applies to shuttles and www only.
 estuary_system_user: "estuary"
