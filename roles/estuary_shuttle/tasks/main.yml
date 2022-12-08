@@ -21,7 +21,7 @@
 - name: Compile Estuary
   shell:
     # We force golang and bashrc to load, otherwise Rust and Go won't work.
-    cmd: source /etc/profile.d/golang.sh ; source /root/.cargo/env ; RUSTFLAGS="-C target-cpu=native -g" FFI_BUILD_FROM_SOURCE=1 make all
+    cmd: source /etc/profile.d/golang.sh ; source /home/{{ estuary_system_user | default('estuary') }}/.cargo/env ; RUSTFLAGS="-C target-cpu=native -g" FFI_BUILD_FROM_SOURCE=1 make all
     creates: /usr/src/estuary/estuary
     chdir: /usr/src/estuary
     executable: /bin/bash
