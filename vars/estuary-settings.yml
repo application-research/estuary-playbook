@@ -3,7 +3,7 @@
 nodejs_version: "16.x"
 
 # Go version to use for Estuary
-golang_version: '1.19.4'
+golang_version: '1.19.3'
 
 ### Estuary settings ###
 # Main service endpoint + API location.
