@@ -1,9 +1,9 @@
 ---
 # Node.JS version to use for Estuary Web
-nodejs_version: "14.x"
+nodejs_version: "16.x"
 
 # Go version to use for Estuary
-golang_version: '1.18.7'
+golang_version: '1.19.4'
 
 ### Estuary settings ###
 # Main service endpoint + API location.
