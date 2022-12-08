@@ -1,21 +1,16 @@
 [estuary]
-api-staging-api01 ansible_host=139.178.86.35
-api-staging-api02 ansible_host=139.178.86.53
-api-staging-api03 ansible_host=139.178.86.3
+staging-api01 ansible_host=139.178.86.35
+staging-api02 ansible_host=139.178.86.53
+staging-api03 ansible_host=139.178.86.3
 
 [estuary_main]
-api-staging-api01 ansible_host=139.178.86.35
-api-staging-api02 ansible_host=139.178.86.53
-api-staging-api03 ansible_host=139.178.86.3
+staging-api01 ansible_host=139.178.86.35
+staging-api02 ansible_host=139.178.86.53
+staging-api03 ansible_host=139.178.86.3
 
 [estuary_shuttle]
 
 [estuary_www]
-api-staging-lb01 ansible_host=147.28.182.121 equinix_uuid=f5b71b7c-af4f-4f90-be90-402df8025990
-api-staging-lb02 ansible_host=147.28.182.97 equinix_uuid=aa58ac6e-d0bf-43c8-8e3f-2db18c43773a
-api-staging-lb03 ansible_host=147.28.182.99 equinix_uuid=aa9c15c3-90bf-477d-a781-3f9db8c2c0a7
-
-[loadbalancer]
-api-staging-lb01 ansible_host=147.28.182.121 equinix_uuid=f5b71b7c-af4f-4f90-be90-402df8025990
-api-staging-lb02 ansible_host=147.28.182.97 equinix_uuid=aa58ac6e-d0bf-43c8-8e3f-2db18c43773a
-api-staging-lb03 ansible_host=147.28.182.99 equinix_uuid=aa9c15c3-90bf-477d-a781-3f9db8c2c0a7
+staging-lb01 ansible_host=147.28.182.121
+staging-lb02 ansible_host=147.28.182.97
+staging-lb03 ansible_host=147.28.182.99
