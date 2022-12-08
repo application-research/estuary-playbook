@@ -3,6 +3,8 @@ Description=Estuary Primary Node
 After=network-online.target postgres.service
 
 [Service]
+User={{ estuary_system_user | default('estuary') }}
+Group={{ estuary_system_user | default('estuary') }}
 EnvironmentFile=/etc/estuary/log.env
 EnvironmentFile=/etc/estuary/config.env
 ExecStart=/usr/src/estuary/estuary --hostname ${ESTUARY_HOSTNAME} --node-api-url ${FULLNODE_API} --repo=${LOTUS_REPO} --database=${ESTUARY_DB_CONN} --datadir=${ESTUARY_DATA} --apilisten=${ESTUARY_API} --lightstep-token=${ESTUARY_LIGHTSTEP_TOKEN} --fail-deals-on-transfer-failure --disable-auto-retrieve=true --disable-new-deals=false --disable-content-adding=false --disable-local-content-adding=true
