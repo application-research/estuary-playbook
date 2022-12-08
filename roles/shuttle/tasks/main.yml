@@ -47,6 +47,7 @@
   ansible.builtin.user:
     name: "{{ estuary_system_user | default('estuary') }}"
     shell: /bin/bash
+    uid: 998
     system: true
 
 - name: Ensure Estuary database data directory exists with correct permissions

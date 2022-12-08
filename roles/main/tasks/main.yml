@@ -12,6 +12,13 @@
     state: present
   when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
 
+- name: Create a system user for Estuary
+  ansible.builtin.user:
+    name: "{{ estuary_system_user | default('estuary') }}"
+    shell: /bin/bash
+    uid: 998
+    system: true
+
 - name: Check out Estuary from git
   ansible.builtin.git:
     repo: https://github.com/application-research/estuary
@@ -30,25 +37,26 @@
 - name: Ensure estuary data directory
   ansible.builtin.file:
     path: /usr/src/estuary/data/
-    owner: root
-    group: root
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
     mode: 0750
     state: directory
 - name: Ensure estuary private directory
   ansible.builtin.file:
     path: /usr/estuary/private
-    owner: root
-    group: root
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
     mode: 0700
     state: directory
     recurse: true
 - name: Ensure estuary log directory
   ansible.builtin.file:
     path: /var/log/estuary/
-    owner: root
-    group: root
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
     mode: 0750
     state: directory
+
 - name: Get and store estuary token
   ansible.builtin.shell:
     cmd: /usr/src/estuary/estuary setup --database="{{ database_config }}" --username admin --password Password123 | grep Token | cut -d ' ' -f 3 > /usr/estuary/private/token
@@ -76,24 +84,24 @@
   ansible.builtin.file:
     path: /etc/estuary
     state: directory
-    owner: root
-    group: root
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
     mode: 0755
 
 - name: Copy main config
   ansible.builtin.template:
     src: config.env
     dest: /etc/estuary/config.env
-    owner: root
-    group: root
-    mode: 0644
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
+    mode: 0640
 
 - name: Copy logging config
   ansible.builtin.template:
     src: log.env
     dest: /etc/estuary/log.env
-    owner: root
-    group: root
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
     mode: 0644
 
 - name: Run daemon-reload
