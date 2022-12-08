@@ -24,7 +24,7 @@
     - role: geerlingguy.postgresql
       become: true
       when: install_postgresql
-    - main
+    - estuary_main
 
 - name: Install Estuary shuttle nodes
   hosts: estuary_shuttle
@@ -41,7 +41,7 @@
     - role: geerlingguy.postgresql
       become: true
       when: install_postgresql
-    - shuttle
+    - estuary_shuttle
 
 - name: Install Estuary web node
   hosts: estuary_www
@@ -52,4 +52,4 @@
 
   roles:
     - geerlingguy.nodejs
-    - www
+    - estuary_www
