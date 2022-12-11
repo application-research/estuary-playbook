@@ -20,9 +20,8 @@
   roles:
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
-      golang_download_dir: '$HOME/.ansible/tmp/downloads'
+    - role: zorlin.rust
       become_user: "{{ estuary_system_user | default('estuary') }}"
-    - zorlin.rust
     - role: geerlingguy.postgresql
       become: true
       when: install_postgresql
@@ -39,9 +38,8 @@
   roles:
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
-      golang_download_dir: '$HOME/.ansible/tmp/downloads'
+    - role: zorlin.rust
       become_user: "{{ estuary_system_user | default('estuary') }}"
-    - zorlin.rust
     - role: geerlingguy.postgresql
       become: true
       when: install_postgresql
