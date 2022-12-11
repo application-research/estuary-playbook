@@ -19,7 +19,7 @@
     version: "{{ estuary_version }}"
 
 - name: Compile Estuary
-  shell:
+  ansible.builtin.shell:
     # We force golang and bashrc to load, otherwise Rust and Go won't work.
     cmd: source /etc/profile.d/golang.sh ; source /home/{{ estuary_system_user | default('estuary') }}/.cargo/env ; RUSTFLAGS="-C target-cpu=native -g" FFI_BUILD_FROM_SOURCE=1 make all
     creates: /usr/src/estuary/estuary
@@ -68,7 +68,7 @@
     state: directory
 
 - name: Install Estuary token
-  copy:
+  ansible.builtin.copy:
     src: secrets/token
     dest: /usr/estuary/private/token
     owner: root
@@ -94,7 +94,7 @@
     creates: /usr/estuary/private/shuttle_token_actual
 
 - name: Install Estuary shuttle service
-  template:
+  ansible.builtin.template:
     src: estuary-shuttle.service
     dest: /etc/systemd/system/estuary-shuttle.service
     owner: root
@@ -102,7 +102,7 @@
     mode: 0755
 
 - name: Create config directory for estuary shuttle
-  file:
+  ansible.builtin.file:
     path: /etc/estuary-shuttle
     state: directory
     owner: root
@@ -110,7 +110,7 @@
     mode: 0755
 
 - name: Copy main config
-  template:
+  ansible.builtin.template:
     src: config.env
     dest: /etc/estuary-shuttle/config.env
     owner: root
@@ -118,7 +118,7 @@
     mode: 0644
 
 - name: Copy logging config
-  template:
+  ansible.builtin.template:
     src: log.env
     dest: /etc/estuary-shuttle/log.env
     owner: root
@@ -126,11 +126,11 @@
     mode: 0644
 
 - name: Run daemon-reload
-  command:
-    cmd: systemctl daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: true
 
 - name: Ensure estuary shuttle is running
-  systemd:
+  ansible.builtin.systemd:
     name: estuary-shuttle
     state: started
     enabled: true

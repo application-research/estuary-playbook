@@ -1,0 +1,35 @@
+# Estuary HAAPI staging
+[estuary]
+staging-api01 ansible_host=139.178.86.35
+staging-api02 ansible_host=139.178.86.53
+staging-api03 ansible_host=139.178.86.3
+
+[estuary_main]
+staging-api01 ansible_host=139.178.86.35
+staging-api02 ansible_host=139.178.86.53
+staging-api03 ansible_host=139.178.86.3
+
+[etcd]
+staging-db01 ansible_host=147.75.35.93 equinix_uuid=182c00d4-d11c-4c36-a801-5f2b7b1f160a
+staging-db02 ansible_host=147.75.35.95 equinix_uuid=0fdb21dd-a6d0-491a-92d8-c046fce5c52b
+staging-db03 ansible_host=147.28.141.19 equinix_uuid=8b831128-3905-4b9a-9e56-18fc9967a0c3
+
+[etcd_master]
+staging-db01 ansible_host=147.75.35.93 equinix_uuid=182c00d4-d11c-4c36-a801-5f2b7b1f160a
+staging-db02 ansible_host=147.75.35.95 equinix_uuid=0fdb21dd-a6d0-491a-92d8-c046fce5c52b
+staging-db03 ansible_host=147.28.141.19 equinix_uuid=8b831128-3905-4b9a-9e56-18fc9967a0c3
+
+[postgresql]
+staging-db01 ansible_host=147.75.35.93 equinix_uuid=182c00d4-d11c-4c36-a801-5f2b7b1f160a
+staging-db02 ansible_host=147.75.35.95 equinix_uuid=0fdb21dd-a6d0-491a-92d8-c046fce5c52b
+staging-db03 ansible_host=147.28.141.19 equinix_uuid=8b831128-3905-4b9a-9e56-18fc9967a0c3
+
+[loadbalancer]
+staging-lb01 ansible_host=147.28.182.121 equinix_uuid=f5b71b7c-af4f-4f90-be90-402df8025990
+staging-lb02 ansible_host=147.28.182.97 equinix_uuid=aa58ac6e-d0bf-43c8-8e3f-2db18c43773a
+staging-lb03 ansible_host=147.28.182.99 equinix_uuid=aa9c15c3-90bf-477d-a781-3f9db8c2c0a7
+
+[gather:children]
+postgresql
+estuary
+estuary_main

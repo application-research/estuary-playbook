@@ -21,4 +21,4 @@
     dest: /etc/ansible/facts.d/uuid.fact
     owner: root
     group: root
-    mode: 0444
+    mode: 0400

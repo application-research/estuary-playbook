@@ -1,0 +1,12 @@
+---
+# Precreate the postgres user and group
+- name: Add patroni group
+  ansible.builtin.group:
+    name: "{{ patroni_system_group | default('postgres') }}"
+    state: present
+
+- name: Add patroni user
+  ansible.builtin.user:
+    name: "{{ patroni_system_user | default('postgres') }}"
+    group: "{{ patroni_system_group | default('postgres') }}"
+    system: true

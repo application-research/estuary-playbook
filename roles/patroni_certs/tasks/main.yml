@@ -1,0 +1,35 @@
+---
+- name: Make a directory for postgres
+  ansible.builtin.file:
+    path: /var/lib/patroni.pki/
+    owner: postgres
+    group: postgres
+    mode: 0750
+    state: directory
+
+- name: Copy CA certificate
+  ansible.builtin.copy:
+    src: /var/lib/etcd/postgresql.pki/ca.pem
+    dest: /var/lib/patroni.pki/ca.pem
+    owner: postgres
+    group: postgres
+    mode: 0440
+    remote_src: true
+
+- name: Copy node-specific certificate
+  ansible.builtin.copy:
+    src: "/var/lib/etcd/postgresql.pki/{{ inventory_hostname }}.pem"
+    dest: "/var/lib/patroni.pki/{{ inventory_hostname }}.pem"
+    owner: postgres
+    group: postgres
+    mode: 0440
+    remote_src: true
+
+- name: Copy node-specific key
+  ansible.builtin.copy:
+    src: "/var/lib/etcd/postgresql.pki/{{ inventory_hostname }}-key.pem"
+    dest: "/var/lib/patroni.pki/{{ inventory_hostname }}-key.pem"
+    owner: postgres
+    group: postgres
+    mode: 0440
+    remote_src: true
