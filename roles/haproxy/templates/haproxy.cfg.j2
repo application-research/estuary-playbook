@@ -54,7 +54,9 @@ frontend http
     acl letsencrypt path_beg /.well-known/acme-challenge/
     use_backend letsencrypt if letsencrypt
     use_backend api if api
+{% if groups["estuary_www"] is defined and groups["estuary_www"] %}
     use_backend web if web
+{% endif %}
     default_backend blackhole
 
 {% if groups["estuary_www"] is defined and groups["estuary_www"] %}

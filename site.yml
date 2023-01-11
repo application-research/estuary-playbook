@@ -73,6 +73,7 @@
 - name: Install Estuary shuttle nodes
   hosts: estuary_shuttle
   become: true
+  remote_user: root
 
   vars_files:
     - "vars/secrets.{{ env_name }}.yml"
