@@ -57,6 +57,7 @@ frontend http
     use_backend web if web
     default_backend blackhole
 
+{% if groups["estuary_www"] is defined and groups["estuary_www"] %}
 frontend https
     bind *:443 ssl crt /etc/ssl/api.haapi.tech/api.haapi.tech.pem
 
@@ -71,6 +72,7 @@ frontend https
     use_backend api if api
     use_backend web if web
     default_backend blackhole
+{% endif %}
 
 frontend database
     bind *:5432
@@ -98,13 +100,15 @@ backend api
     server api{{ loop.index }} {{ hostvars[node].ansible_host }}:3004 check
 {% endfor %}
 
+{% if groups["estuary_www"] is defined and groups["estuary_www"] %}
 backend web
     option httpchk
     http-check expect status 200
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
-{% for node in groups.estuary_www %}
+    {% for node in groups.estuary_www %}
     server web{{ loop.index }} {{ hostvars[node].ansible_host }}:4444 check
-{% endfor %}
+    {% endfor %}
+{% endif %}
 
 backend postgres
     balance leastconn
@@ -113,7 +117,7 @@ backend postgres
     http-check expect status 200
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
 {% for node in groups.postgresql %}
-    server postgres{{ loop.index }} {{ hostvars[node]["ansible_bond0_0"]["ipv4"]["address"]}}:5432 maxconn 100 check port 8008
+    server postgres{{ loop.index }} {{ hostvars[node]["ansible_bond0_0"]["ipv4"]["address"]}}:5432 maxconn {{ postgres_connections }} check port 8008
 {% endfor %}
 
 backend postgres_read
@@ -121,6 +125,6 @@ backend postgres_read
     balance leastconn
     default-server inter 3s fall 3 rise 2 on-marked-down shutdown-sessions
 {% for node in groups.postgresql %}
-    server postgres{{ loop.index }} {{ hostvars[node]["ansible_bond0_0"]["ipv4"]["address"]}}:5432 maxconn 100 check
+    server postgres{{ loop.index }} {{ hostvars[node]["ansible_bond0_0"]["ipv4"]["address"]}}:5432 maxconn {{ postgres_read_connections }} check
 {% endfor %}
 

@@ -15,81 +15,8 @@
   remote_user: root
 
   vars_files:
-    - vars/secrets.yml
+    - "vars/secrets.{{ env_name }}.yml"
 
-  vars:
-    corosync_expected_votes: "{{ ( groups[pacemaker_cluster_group]|count /2 ) | round (0, 'ceil') | int }}"
-    corosync_bindnet_interface: 'bond0_0'
-    corosync_cluster_name: 'loadbalancer'
-    pacemaker_cluster_group: 'loadbalancer'
-    pacemaker_cluster_constraints:
-      - constraint: 'colocation'
-        action: 'add'
-        source_resource_id: 'virtual_ip'
-        target_resource_id: 'elastic_ip_metal'
-        score: 'INFINITY'
-      - constraint: 'colocation'
-        action: 'add'
-        source_resource_id: 'virtual_ip_public'
-        target_resource_id: 'elastic_ip_metal_public'
-        score: 'INFINITY'
-    pacemaker_cluster_resources:
-      - resource_id: 'virtual_ip'
-        action: 'create'
-        provider: 'ocf:heartbeat:IPaddr2'
-        options:
-          - 'ip={{ elastic_ip_lb }}'
-          - 'cidr_netmask=32'
-          - 'nic=bond0'
-        op: 'monitor'
-        op_options:
-          - 'interval=8s'
-      - resource_id: 'elastic_ip_metal'
-        action: 'create'
-        provider: 'ocf:equinix:equinix-elastic-ip'
-        options:
-          - 'ip={{ elastic_ip_lb }}'
-          - 'subnet={{ elastic_ip_subnet }}'
-        op: 'monitor'
-        op_options:
-          - 'interval=14s'
-      - resource_id: 'virtual_ip_public'
-        action: 'create'
-        provider: 'ocf:heartbeat:IPaddr2'
-        options:
-          - 'ip={{ elastic_ip_lb_public }}'
-          - 'cidr_netmask=32'
-          - 'nic=bond0'
-        op: 'monitor'
-        op_options:
-          - 'interval=8s'
-      - resource_id: 'elastic_ip_metal_public'
-        action: 'create'
-        provider: 'ocf:equinix:equinix-elastic-ip-public'
-        options:
-          - 'ip={{ elastic_ip_lb_public }}'
-        op: 'monitor'
-        op_options:
-          - 'interval=14s'
-      - resource_id: 'loadbalancer'
-        action: 'create'
-        provider: 'lsb:haproxy'
-        op: 'monitor'
-        op_options:
-          - 'timeout=5s'
-          - 'interval=5s'
-          - 'clone'
-    pacemaker_cluster_settings:
-      - property: 'start-failure-is-fatal'
-        value: 'false'
-      - property: 'pe-warn-series-max'
-        value: 1000
-      - property: 'pe-input-series-max'
-        value: 1000
-      - property: 'pe-error-series-max'
-        value: 1000
-      - property: 'cluster-recheck-interval'
-        value: 5min
   roles:
     - haproxy
     - {role: equinix_uuid, when: not equinix_uuid | bool}
@@ -101,11 +28,6 @@
   become: true # Not needed for root but we won't use root later
   remote_user: root
 
-  vars:
-    etcd_cluster: "{% for host in groups[etcd_master_group_name] %}{{ hostvars[host]['ansible_nodename'] }}={{ etcd_scheme }}{{ hostvars[host]['etcd_address_cluster'] }}:{{ etcd_port_peer }}{% if not loop.last %},{% endif %}{% endfor %}"  # yamllint disable-line rule:line-length
-    etcd_cluster_name: postgresql
-    etcd_iface_cluster: bond0_0
-
   roles:
     - role: zorlin.etcd_cluster
       etcd_secure: true
@@ -116,32 +38,8 @@
   remote_user: root
 
   vars_files:
-    - vars/secrets.yml
+    - "vars/secrets.{{ env_name }}.yml"
 
-  vars:
-    patroni_system_group: postgres
-    patroni_install_haproxy: false
-    patroni_install_watchdog_loader: false
-    patroni_postgresql_version: 14
-    patroni_etcd_hosts: "{% for host in groups['postgresql'] %}{{ hostvars[host]['ansible_bond0_0']['ipv4']['address'] }}:2379{% if not loop.last %},{% endif %}{% endfor %}"  # yamllint disable-line rule:line-length
-    patroni_etcd_protocol: https
-    patroni_etcd_cacert: "/var/lib/patroni.pki/ca.pem"
-    patroni_etcd_cert: "/var/lib/patroni.pki/{{ inventory_hostname }}.pem"
-    patroni_etcd_key: "/var/lib/patroni.pki/{{ inventory_hostname }}-key.pem"
-    patroni_postgresql_connect_address: "{{ ansible_bond0_0.ipv4.address }}:5432"
-    patroni_restapi_connect_address: "{{ ansible_bond0_0.ipv4.address }}:{{ patroni_restapi_port }}"
-    patroni_postgresql_pg_hba:
-      - { type: "local", database: "all", user: "all", method: "peer" }
-      - { type: "host", database: "all", user: "postgres", address: "{{ internal_subnet }}", method: "md5" }
-      - { type: "host", database: "estuary", user: "estuary", address: "{{ internal_subnet }}", method: "scram-sha-256" }
-      - { type: "host", database: "all", user: "all", address: "{{ internal_subnet }}", method: "ident", options: "map=omicron" }
-      - { type: "host", database: "all", user: "all", address: "139.178.94.215/32", method: "scram-sha-256" }
-      - { type: "host", database: "all", user: "all", address: "86.109.11.91/32", method: "scram-sha-256" }
-      - { type: "host", database: "all", user: "all", address: "139.178.94.211/32", method: "scram-sha-256" }
-      - { type: "host", database: "replication", user: "{{ patroni_replication_username }}", address: "{{ internal_subnet }}", method: "md5" }
-      - { type: "host", database: "replication", user: "{{ patroni_replication_username }}", address: "127.0.0.1/32", method: "md5" }
-    patroni_bootstrap_dcs_slots:
-      - { name: "patroni", type: "physical" }
   roles:
     - patroni_system_user
     - patroni_certs
@@ -151,40 +49,33 @@
   hosts: estuary
   become: true
 
-  vars_files:
-    - "vars/estuary-settings.yml"
-
   tasks:
     - name: Install build tools and compilers
       ansible.builtin.package:
         name: build-essential
         state: present
 
-- name: Install Estuary API node(s)
-  hosts: estuary_main
-  become: true
+# Disabled temporarily while we deploy to production
+# - name: Install Estuary API node(s)
+#   hosts: estuary_main
+#   become: true
 
-  vars_files:
-    - "vars/secrets.yml"
-    - "vars/estuary-settings.yml"
+#   vars_files:
+#     - "vars/secrets.{{ env_name }}.yml"
 
-  roles:
-    - role: gantsign.golang
-      golang_gopath: '$HOME/workspace-go'
-    - role: zorlin.rust
-      become_user: "{{ estuary_system_user | default('estuary') }}"
-    - role: geerlingguy.postgresql
-      become: true
-      when: install_postgresql
-    - estuary_main
+#   roles:
+#     - role: gantsign.golang
+#       golang_gopath: '$HOME/workspace-go'
+#     - role: zorlin.rust
+#       become_user: "{{ estuary_system_user | default('estuary') }}"
+#     - estuary_main
 
 - name: Install Estuary shuttle nodes
   hosts: estuary_shuttle
   become: true
 
   vars_files:
-    - "vars/secrets.yml"
-    - "vars/estuary-settings.yml"
+    - "vars/secrets.{{ env_name }}.yml"
 
   roles:
     - role: gantsign.golang
@@ -199,9 +90,6 @@
 - name: Install Estuary web node
   hosts: estuary_www
   become: true
-
-  vars_files:
-    - "vars/estuary-settings.yml"
 
   roles:
     - geerlingguy.nodejs

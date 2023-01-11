@@ -1,0 +1,16 @@
+---
+### Database settings ###
+# Enable *one* of the following database_config stanzas to set up database access.
+# SQLite is simplest but less scalable, perfect for evaluating Estuary prior to production setup.
+
+# SQLite mode settings (default)
+#database_config_shuttle: 'sqlite={{estuary_shuttle_data}}/estuary.db'
+
+# SQLite mode with a custom storage location for the SQLite database
+#database_config_shuttle: 'sqlite=/data/sqlite/estuary.db'
+
+# PostgreSQL mode
+database_config_shuttle: 'postgres=host=127.0.0.1 user=estuary_shuttle password={{ estuary_shuttle_database_password }} dbname=estuary_shuttle'
+
+# Trigger postgres installation on the shuttles by setting this to true if needed.
+install_postgresql: true

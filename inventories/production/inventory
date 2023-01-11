@@ -18,5 +18,12 @@ prod-lb01 ansible_host=139.178.94.215 equinix_uuid=9a8eed0d-b536-4836-8cfc-147eb
 prod-lb02 ansible_host=86.109.11.91 equinix_uuid=a972ec78-d59a-47a4-b110-dd6c5dfc0e60
 prod-lb03 ansible_host=139.178.94.211 equinix_uuid=549bf043-1fb9-4e09-ac27-f16a05b7c7d2
 
+[estuary_shuttle]
+prod-shuttle09 ansible_host=shuttle-9.estuary.tech
+prod-shuttle10 ansible_host=shuttle-10.estuary.tech
+
+[estuary_main]
+api.estuary.tech ansible_host=147.75.49.99
+
 [gather:children]
 postgresql

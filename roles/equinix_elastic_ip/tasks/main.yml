@@ -17,7 +17,7 @@
 - name: Checkout pacemaker-equinix-elastic-ip
   ansible.builtin.git:
     repo: https://github.com/Zorlin/pacemaker-equinix-elastic-ip.git
-    version: v0.1.1
+    version: main
     dest: /usr/src/pacemaker-equinix-elastic-ip/
 
 - name: Deploy private Elastic IP OCF agent

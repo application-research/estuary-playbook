@@ -3,3 +3,4 @@
 secrets/**
 vars/secrets.yml
 vars/secret.yml
+vars/secrets.*.yml

@@ -1,0 +1,24 @@
+---
+patroni_system_group: postgres
+patroni_install_haproxy: false
+patroni_install_watchdog_loader: false
+patroni_postgresql_version: 14
+patroni_etcd_hosts: "{% for host in groups['postgresql'] %}{{ hostvars[host]['ansible_bond0_0']['ipv4']['address'] }}:2379{% if not loop.last %},{% endif %}{% endfor %}"  # yamllint disable-line rule:line-length
+patroni_etcd_protocol: https
+patroni_etcd_cacert: "/var/lib/patroni.pki/ca.pem"
+patroni_etcd_cert: "/var/lib/patroni.pki/{{ inventory_hostname }}.pem"
+patroni_etcd_key: "/var/lib/patroni.pki/{{ inventory_hostname }}-key.pem"
+patroni_postgresql_connect_address: "{{ ansible_bond0_0.ipv4.address }}:5432"
+patroni_restapi_connect_address: "{{ ansible_bond0_0.ipv4.address }}:{{ patroni_restapi_port }}"
+patroni_bootstrap_dcs_slots:
+  - { name: "patroni", type: "physical" }
+patroni_postgresql_pg_hba:
+  - { type: "local", database: "all", user: "all", method: "peer" }
+  - { type: "host", database: "all", user: "postgres", address: "{{ internal_subnet }}", method: "md5" }
+  - { type: "host", database: "estuary", user: "estuary", address: "{{ internal_subnet }}", method: "scram-sha-256" }
+  - { type: "host", database: "all", user: "all", address: "{{ internal_subnet }}", method: "ident", options: "map=omicron" }
+  - { type: "host", database: "all", user: "all", address: "139.178.94.215/32", method: "scram-sha-256" }
+  - { type: "host", database: "all", user: "all", address: "86.109.11.91/32", method: "scram-sha-256" }
+  - { type: "host", database: "all", user: "all", address: "139.178.94.211/32", method: "scram-sha-256" }
+  - { type: "host", database: "replication", user: "{{ patroni_replication_username }}", address: "{{ internal_subnet }}", method: "md5" }
+  - { type: "host", database: "replication", user: "{{ patroni_replication_username }}", address: "127.0.0.1/32", method: "md5" }
