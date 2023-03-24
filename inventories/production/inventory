@@ -21,7 +21,7 @@ prod-lb03 ansible_host=139.178.94.211 equinix_uuid=549bf043-1fb9-4e09-ac27-f16a0
 [estuary_shuttle]
 prod-shuttle09 ansible_host=shuttle-9.estuary.tech
 prod-shuttle10 ansible_host=shuttle-10.estuary.tech
-prod-shuttle11 ansible_host=shuttle-11.estuaryt.ech
+prod-shuttle11 ansible_host=shuttle-11.estuary.tech
 
 [estuary_main]
 api.estuary.tech ansible_host=147.75.49.99
