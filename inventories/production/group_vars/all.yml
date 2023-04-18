@@ -10,7 +10,7 @@ golang_version: '1.19.3'
 
 # Main service endpoint + API location.
 # This should usually be a name your main Estuary service node is reachable at, complete with port.
-estuary_hostname: "api.haapi.tech"
+estuary_hostname: "api.estuary.tech"
 estuary_api: "0.0.0.0:3004"
 
 # Estuary version to deploy
@@ -24,9 +24,6 @@ fullnode_api: "https://api.node.glif.io/" # alt: ws://api.chain.love"
 # For shuttles, where to store database data.
 #estuary_data: "/usr/src/estuary/data"
 estuary_data: "/api/estuary/data"
-
-# For the shuttles, where to store non-database data
-estuary_shuttle_data: "/shuttle/estuary/data"
 
 # User to run Estuary as, applies to shuttles and www only.
 estuary_system_user: "estuary"

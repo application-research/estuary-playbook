@@ -8,7 +8,7 @@ Group={{ estuary_system_user | default('estuary') }}
 LimitNOFILE=infinity
 EnvironmentFile=/etc/estuary-shuttle/log.env
 EnvironmentFile=/etc/estuary-shuttle/config.env
-ExecStart=bash -c '/usr/src/estuary/estuary-shuttle --dev --estuary-api ${ESTUARY_API} --database=${ESTUARY_DB_CONN} --datadir=${SHUTTLE_DATA} --apilisten=${SHUTTLE_API} --logging=false --host=${SHUTTLE_HOSTNAME} --handle=${SHUTTLE_HANDLE} --auth-token=${SHUTTLE_AUTH_TOKEN} --blockstore=${SHUTTLE_BLOCKSTORE} --jaeger-tracing=true --jaeger-provider-url=${JAEGER_ENDPOINT} --libp2p-websockets'
+ExecStart=bash -c '/usr/local/src/estuary/estuary-shuttle --log-level=debug --queue-eng-enabled --queue-eng-host=145.40.77.207:4150 --queue-eng-consumers=3 --estuary-api ${ESTUARY_API} --database=${ESTUARY_DB_CONN} --datadir=${SHUTTLE_DATA} --apilisten=${SHUTTLE_API} --host=${SHUTTLE_HOSTNAME} --handle=${SHUTTLE_HANDLE} --auth-token=${SHUTTLE_AUTH_TOKEN} --blockstore=${SHUTTLE_BLOCKSTORE} --jaeger-tracing=false --jaeger-provider-url=${JAEGER_ENDPOINT} --libp2p-websockets'   
 Restart=always
 RestartSec=10
 

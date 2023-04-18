@@ -14,3 +14,15 @@ database_config_shuttle: 'postgres=host=127.0.0.1 user=estuary_shuttle password=
 
 # Trigger postgres installation on the shuttles by setting this to true if needed.
 install_postgresql: true
+
+postgresql_databases:
+  - name: estuary_shuttle
+    owner: estuary_shuttle
+
+postgresql_users:
+  - name: estuary_shuttle
+    password: "{{ estuary_shuttle_database_password }}"
+    db: estuary_shuttle
+
+# For the shuttles, where to store non-database data
+estuary_shuttle_data: "/estblockstore"

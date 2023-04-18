@@ -79,6 +79,7 @@
     - "vars/secrets.{{ env_name }}.yml"
 
   roles:
+    - estuary_system_user
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
     - role: zorlin.rust

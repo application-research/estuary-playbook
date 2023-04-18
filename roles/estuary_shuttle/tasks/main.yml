@@ -1,4 +1,10 @@
 ---
+- name: Install build-essential (Ubuntu and Debian)
+  ansible.builtin.package:
+    name: build-essential
+    state: present
+  when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
 - name: Install main dependencies
   ansible.builtin.package:
     name:
@@ -12,23 +18,34 @@
     state: present
   when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
 
+- name: Create estuary folder
+  ansible.builtin.file:
+    path: /usr/local/ src/estuary
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
+    mode: 0700
+    state: directory
+    recurse: false
+
 - name: Check out Estuary from git
   ansible.builtin.git:
     repo: https://github.com/application-research/estuary
-    dest: /usr/src/estuary
+    dest: /usr/local/src/estuary
     version: "{{ estuary_version }}"
+  become_user: "{{ estuary_system_user | default('estuary') }}"
 
 - name: Compile Estuary
   ansible.builtin.shell:
     # We force golang and bashrc to load, otherwise Rust and Go won't work.
     cmd: source /etc/profile.d/golang.sh ; source /home/{{ estuary_system_user | default('estuary') }}/.cargo/env ; RUSTFLAGS="-C target-cpu=native -g" FFI_BUILD_FROM_SOURCE=1 make all
-    creates: /usr/src/estuary/estuary
-    chdir: /usr/src/estuary
+    creates: /usr/local/src/estuary/estuary
+    chdir: /usr/local/src/estuary
     executable: /bin/bash
+  become_user: "{{ estuary_system_user | default('estuary') }}"
 
 - name: Ensure estuary top directory exists
   ansible.builtin.file:
-    path: /usr/estuary
+    path: /opt/estuary
     owner: "{{ estuary_system_user | default('estuary') }}"
     group: "{{ estuary_system_user | default('estuary') }}"
     mode: 0700
@@ -37,19 +54,12 @@
 
 - name: Ensure estuary private directory exists
   ansible.builtin.file:
-    path: /usr/estuary/private
+    path: /opt/estuary/private
     owner: "{{ estuary_system_user | default('estuary') }}"
     group: "{{ estuary_system_user | default('estuary') }}"
     mode: 0700
     state: directory
     recurse: false
-
-- name: Create a system user for Estuary
-  ansible.builtin.user:
-    name: "{{ estuary_system_user | default('estuary') }}"
-    shell: /bin/bash
-    uid: 998
-    system: true
 
 - name: Ensure Estuary database data directory exists with correct permissions
   ansible.builtin.file:
@@ -70,28 +80,28 @@
 - name: Install Estuary token
   ansible.builtin.copy:
     src: secrets/token
-    dest: /usr/estuary/private/token
+    dest: /opt/estuary/private/token
     owner: root
     group: root
     mode: 0700
 
 - name: Generate a shuttle token
   ansible.builtin.shell:
-    cmd: 'curl -H "Authorization: Bearer $(cat /usr/estuary/private/token)" -X POST http://estuary-main.windowpa.in:3004/admin/shuttle/init > /usr/estuary/private/shuttle_token'
+    cmd: 'curl -H "Authorization: Bearer $(cat /opt/estuary/private/token)" -X POST https://{{ estuary_hostname }}/admin/shuttle/init > /opt/estuary/private/shuttle_token'
     executable: /bin/bash
-    creates: /usr/estuary/private/shuttle_token
+    creates: /opt/estuary/private/shuttle_token
 
 - name: Extract shuttle token actual
   ansible.builtin.shell:
-    cmd: "cat /usr/estuary/private/shuttle_token | jq -r '.handle' > /usr/estuary/private/shuttle_token_handle"
+    cmd: "cat /opt/estuary/private/shuttle_token | jq -r '.handle' > /opt/estuary/private/shuttle_token_handle"
     executable: /bin/bash
-    creates: /usr/estuary/private/shuttle_token_handle
+    creates: /opt/estuary/private/shuttle_token_handle
 
 - name: Extract shuttle token actual
   ansible.builtin.shell:
-    cmd: "cat /usr/estuary/private/shuttle_token| jq -r '.token' > /usr/estuary/private/shuttle_token_actual"
+    cmd: "cat /opt/estuary/private/shuttle_token| jq -r '.token' > /opt/estuary/private/shuttle_token_actual"
     executable: /bin/bash
-    creates: /usr/estuary/private/shuttle_token_actual
+    creates: /opt/estuary/private/shuttle_token_actual
 
 - name: Install Estuary shuttle service
   ansible.builtin.template:
