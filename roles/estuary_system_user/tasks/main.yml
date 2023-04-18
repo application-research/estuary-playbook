@@ -1,7 +1,14 @@
 ---
-- name: Create a system user for Estuary
+- name: Create a group for Estuary
+  ansible.builtin.group:
+    name: "{{ estuary_system_group | default('estuary') }}"
+    system: true
+
+- name: Create a user for Estuary
   ansible.builtin.user:
     name: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_group | default('estuary') }}"
+    home: "{{ estuary_system_home | default('/var/lib/arg-estuary') }}"
     shell: /bin/bash
-    uid: 998
+    createhome: true
     system: true
