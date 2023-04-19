@@ -1,0 +1,30 @@
+[etcd]
+prod-db01 ansible_host=139.178.70.253 equinix_uuid=ec7e5c3f-28e4-48ec-8df2-4630657bcc8e
+prod-db02 ansible_host=139.178.70.189 equinix_uuid=78e4e282-305f-4fde-9e89-3f58aed69c9c
+prod-db03 ansible_host=147.75.71.127 equinix_uuid=fec7f5fb-a457-4d87-b334-c08584df1611
+
+[etcd_master]
+prod-db01 ansible_host=139.178.70.253 equinix_uuid=ec7e5c3f-28e4-48ec-8df2-4630657bcc8e
+prod-db02 ansible_host=139.178.70.189 equinix_uuid=78e4e282-305f-4fde-9e89-3f58aed69c9c
+prod-db03 ansible_host=147.75.71.127 equinix_uuid=fec7f5fb-a457-4d87-b334-c08584df1611
+
+[postgresql]
+prod-db01 ansible_host=139.178.70.253 equinix_uuid=ec7e5c3f-28e4-48ec-8df2-4630657bcc8e
+prod-db02 ansible_host=139.178.70.189 equinix_uuid=78e4e282-305f-4fde-9e89-3f58aed69c9c
+prod-db03 ansible_host=147.75.71.127 equinix_uuid=fec7f5fb-a457-4d87-b334-c08584df1611
+
+[loadbalancer]
+prod-lb01 ansible_host=139.178.94.215 equinix_uuid=9a8eed0d-b536-4836-8cfc-147eb165d432
+prod-lb02 ansible_host=86.109.11.91 equinix_uuid=a972ec78-d59a-47a4-b110-dd6c5dfc0e60
+prod-lb03 ansible_host=139.178.94.211 equinix_uuid=549bf043-1fb9-4e09-ac27-f16a05b7c7d2
+
+[estuary_shuttle]
+prod-shuttle09 ansible_host=shuttle-9.estuary.tech
+prod-shuttle10 ansible_host=shuttle-10.estuary.tech
+prod-shuttle11 ansible_host=shuttle-11.estuary.tech
+
+[estuary_main]
+api.estuary.tech ansible_host=147.75.49.99
+
+[gather:children]
+postgresql

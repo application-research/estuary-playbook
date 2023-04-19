@@ -1,0 +1,68 @@
+---
+patroni_system_group: postgres
+patroni_install_haproxy: false
+patroni_install_watchdog_loader: false
+patroni_postgresql_version: 14
+patroni_etcd_hosts: "{% for host in groups['postgresql'] %}{{ hostvars[host]['ansible_bond0_0']['ipv4']['address'] }}:2379{% if not loop.last %},{% endif %}{% endfor %}"  # yamllint disable-line rule:line-length
+patroni_etcd_protocol: https
+patroni_etcd_cacert: "/var/lib/patroni.pki/ca.pem"
+patroni_etcd_cert: "/var/lib/patroni.pki/{{ inventory_hostname }}.pem"
+patroni_etcd_key: "/var/lib/patroni.pki/{{ inventory_hostname }}-key.pem"
+patroni_postgresql_connect_address: "{{ ansible_bond0_0.ipv4.address }}:5432"
+patroni_restapi_connect_address: "{{ ansible_bond0_0.ipv4.address }}:{{ patroni_restapi_port }}"
+patroni_bootstrap_dcs_slots:
+  - { name: "patroni", type: "physical" }
+patroni_postgresql_pg_hba:
+  - { type: "local", database: "all", user: "all", method: "peer" }
+  - { type: "host", database: "all", user: "postgres", address: "{{ internal_subnet }}", method: "md5" }
+  - { type: "host", database: "estuary", user: "estuary", address: "{{ internal_subnet }}", method: "scram-sha-256" }
+  - { type: "host", database: "all", user: "all", address: "{{ internal_subnet }}", method: "ident", options: "map=omicron" }
+  - { type: "host", database: "all", user: "all", address: "139.178.94.215/32", method: "scram-sha-256" }
+  - { type: "host", database: "all", user: "all", address: "86.109.11.91/32", method: "scram-sha-256" }
+  - { type: "host", database: "all", user: "all", address: "139.178.94.211/32", method: "scram-sha-256" }
+  - { type: "host", database: "estuary", user: "estuary", address: "147.75.49.99/32", method: "scram-sha-256" }
+  - { type: "host", database: "estuary", user: "estuary", address: "147.75.71.233/32", method: "scram-sha-256" }
+  - { type: "host", database: "replication", user: "{{ patroni_replication_username }}", address: "{{ internal_subnet }}", method: "md5" }
+  - { type: "host", database: "replication", user: "{{ patroni_replication_username }}", address: "127.0.0.1/32", method: "md5" }
+patroni_log_destination: file
+patroni_log_level: INFO
+patroni_log_dir: /var/log/postgresql
+patroni_log_file_num: 4
+patroni_log_file_size: 26214400
+patroni_bootstrap_dcs_postgresql_parameters:
+  - { option: "max_connections",           value: "250" }
+  - { option: "max_locks_per_transaction", value: "64" }
+  - { option: "max_worker_processes",      value: "64" }
+  - { option: "max_prepared_transactions", value: "0" }
+  - { option: "wal_level",                 value: "replica" }
+  - { option: "wal_log_hints",             value: "on" }
+  - { option: "track_commit_timestamp",    value: "off" }
+  - { option: "max_wal_senders",           value: "10" }
+  - { option: "max_replication_slots",     value: "10" }
+  - { option: "wal_keep_segments",         value: "8" }
+patroni_postgresql_parameters:
+  - { option: "max_connections",                   value: "250" }
+  - { option: "shared_buffers",                   value: "63GB" }
+  - { option: "effective_cache_size",             value: "189GB" }
+  - { option: "maintenance_work_mem",             value: "2GB" }
+  - { option: "checkpoint_completion_target",     value: "0.9" }
+  - { option: "wal_buffers",                      value: "16MB" }
+  - { option: "default_statistics_target",        value: "100" }
+  - { option: "random_page_cost",                 value: "1.1" }
+  - { option: "effective_io_concurrency",         value: "200" }
+  - { option: "work_mem",                         value: "66060kB" }
+  - { option: "min_wal_size",                     value: "2GB" }
+  - { option: "max_wal_size",                     value: "8GB" }
+  - { option: "max_worker_processes",             value: "64" }
+  - { option: "max_parallel_workers_per_gather",  value: "4" }
+  - { option: "max_parallel_workers",             value: "64" }
+  - { option: "max_parallel_maintenance_workers", value: "4" }
+  - { option: "unix_socket_directories",          value: "/var/run/postgresql" }
+
+# note for later
+#       standby_cluster:
+# -      host: postgresql.estuary.tech
+# -      port: 5432
+# -      primary_slot_name: patroni
+# -      create_replica_methods:
+# -        - basebackup

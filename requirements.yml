@@ -5,6 +5,9 @@ roles:
   - name: geerlingguy.postgresql
     version: 3.4.1
   - name: gantsign.golang
-    version: 3.0.2
+    version: 3.0.4
   - name: zorlin.rust
     version: 1.1.1
+  - name: zorlin.pacemaker
+  - name: zorlin.patroni
+  - name: zorlin.etcd_cluster

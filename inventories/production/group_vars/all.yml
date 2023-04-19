@@ -1,0 +1,29 @@
+---
+# Environment name - determines which secrets file will be loaded
+env_name: production
+
+# Node.JS version to use for Estuary Web
+nodejs_version: "16.x"
+
+# Go version to use for Estuary
+golang_version: '1.19.3'
+
+# Main service endpoint + API location.
+# This should usually be a name your main Estuary service node is reachable at, complete with port.
+estuary_hostname: "api.estuary.tech"
+estuary_api: "0.0.0.0:3004"
+
+# Estuary version to deploy
+# This should be a valid tag on the estuary repository
+estuary_version: "v0.3.8"
+
+# FIL full node location. Leave this as default unless you're running your own.
+fullnode_api: "https://api.node.glif.io/" # alt: ws://api.chain.love"
+
+# For the main service, where to store database data and other data.
+# For shuttles, where to store database data.
+#estuary_data: "/usr/src/estuary/data"
+estuary_data: "/api/estuary/data"
+
+# User to run Estuary as, applies to shuttles and www only.
+estuary_system_user: "estuary"

@@ -1,5 +1,5 @@
 # estuary-playbook
-[Estuary](https://github.com/application-research/estuary) with a bit of automation magic.
+It's [Estuary](https://github.com/application-research/estuary), with a bit of automation magic. Estuary Playbook uses Ansible to provide an easy, mostly-automated way to deploy Estuary on your own infrastructure.
 
 ## Requirements
 Install the required roles using `ansible-galaxy install -r requirements.yml`.

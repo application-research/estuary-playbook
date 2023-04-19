@@ -19,19 +19,30 @@
     uid: 998
     system: true
 
+- name: Create estuary folder
+  ansible.builtin.file:
+    path: /usr/src/estuary
+    owner: "{{ estuary_system_user | default('estuary') }}"
+    group: "{{ estuary_system_user | default('estuary') }}"
+    mode: 0700
+    state: directory
+    recurse: false
+
 - name: Check out Estuary from git
   ansible.builtin.git:
     repo: https://github.com/application-research/estuary
     dest: /usr/src/estuary
     version: "{{ estuary_version }}"
+  become_user: "{{ estuary_system_user | default('estuary') }}"
 
 - name: Compile Estuary
   ansible.builtin.shell:
     # We force golang and cargo to load, otherwise Rust and Go won't work.
-    cmd: . /etc/profile.d/golang.sh ; . "/root/.cargo/env" ; RUSTFLAGS="-C target-cpu=native -g" FFI_BUILD_FROM_SOURCE=1 make all
+    cmd: . /etc/profile.d/golang.sh ; . "/home/{{ estuary_system_user | default('estuary') }}/.cargo/env" ; RUSTFLAGS="-C target-cpu=native -g" FFI_BUILD_FROM_SOURCE=1 make all
     creates: /usr/src/estuary/estuary
     chdir: /usr/src/estuary
     executable: /bin/bash
+  become_user: "{{ estuary_system_user | default('estuary') }}"
 
 # Initialize main node
 - name: Ensure estuary data directory
@@ -105,11 +116,11 @@
     mode: 0644
 
 - name: Run daemon-reload
-  command:
-    cmd: systemctl daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: true
 
 - name: Ensure estuary is running
-  systemd:
+  ansible.builtin.systemd:
     name: estuary
     state: started
     enabled: true
