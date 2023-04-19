@@ -25,12 +25,16 @@
   pre_tasks:
     - name: Check if repo-specific secrets file exists
       delegate_to: localhost
+      connection: local
+      become: false
       ansible.builtin.stat:
         path: "{{ playbook_dir }}/vars/secrets.yml"
       register: vault_password_file
 
     - name: If repo-specific secrets file exists, load it in
       delegate_to: localhost
+      connection: local
+      become: false
       ansible.builtin.include_vars:
         file: "vars/secrets.yml"
       when: vault_password_file.stat.exists
@@ -50,12 +54,16 @@
   pre_tasks:
     - name: Check if repo-specific secrets file exists
       delegate_to: localhost
+      connection: local
+      become: false
       ansible.builtin.stat:
         path: "{{ playbook_dir }}/vars/secrets.yml"
       register: vault_password_file
 
     - name: If repo-specific secrets file exists, load it in
       delegate_to: localhost
+      connection: local
+      become: false
       ansible.builtin.include_vars:
         file: "vars/secrets.yml"
       when: vault_password_file.stat.exists
