@@ -57,7 +57,7 @@
     recurse: false
 
 - name: Install Estuary token
-  copy:
+  ansible.builtin.copy:
     src: secrets/token
     dest: /usr/estuary/private/token
     owner: "{{ estuary_system_user | default('estuary') }}"
@@ -65,7 +65,7 @@
     mode: 0700
 
 - name: Install Estuary WWW service
-  template:
+  ansible.builtin.template:
     src: estuary-www.service
     dest: /etc/systemd/system/estuary-www.service
     owner: root
@@ -89,8 +89,8 @@
     mode: 0644
 
 - name: Run daemon-reload
-  ansible.builtin.command:
-    cmd: systemctl daemon-reload
+  ansible.builtin.systemd:
+    daemon_reload: true
 
 - name: Ensure estuary www is running
   ansible.builtin.systemd:

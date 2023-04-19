@@ -1,0 +1,39 @@
+---
+- name: Install dependencies
+  ansible.builtin.package:
+    name:
+      - crudini
+      - jq
+    state: present
+
+- name: Create Pacemaker folder for custom resource agent
+  ansible.builtin.file:
+    path: /usr/lib/ocf/resource.d/equinix
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Checkout pacemaker-equinix-elastic-ip
+  ansible.builtin.git:
+    repo: https://github.com/Zorlin/pacemaker-equinix-elastic-ip.git
+    version: main
+    dest: /usr/src/pacemaker-equinix-elastic-ip/
+
+- name: Deploy private Elastic IP OCF agent
+  ansible.builtin.file:
+    src: /usr/src/pacemaker-equinix-elastic-ip/equinix-elastic-ip
+    dest: /usr/lib/ocf/resource.d/equinix/equinix-elastic-ip
+    owner: root
+    group: root
+    mode: 0755
+    state: link
+
+- name: Deploy public Elastic IP OCF agent
+  ansible.builtin.file:
+    src: /usr/src/pacemaker-equinix-elastic-ip/equinix-elastic-ip-public
+    dest: /usr/lib/ocf/resource.d/equinix/equinix-elastic-ip-public
+    owner: root
+    group: root
+    mode: 0755
+    state: link

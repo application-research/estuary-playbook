@@ -1,0 +1,75 @@
+---
+postgres_connections: 250
+postgres_read_connections: 500
+corosync_expected_votes: "{{ ( groups[pacemaker_cluster_group]|count /2 ) | round (0, 'ceil') | int }}"
+corosync_bindnet_interface: 'bond0_0'
+corosync_cluster_name: 'loadbalancer'
+pacemaker_cluster_group: 'loadbalancer'
+pacemaker_cluster_constraints:
+  - constraint: 'colocation'
+    action: 'add'
+    source_resource_id: 'virtual_ip'
+    target_resource_id: 'elastic_ip_metal'
+    score: 'INFINITY'
+  - constraint: 'colocation'
+    action: 'add'
+    source_resource_id: 'virtual_ip_public'
+    target_resource_id: 'elastic_ip_metal_public'
+    score: 'INFINITY'
+pacemaker_cluster_resources:
+  - resource_id: 'virtual_ip'
+    action: 'create'
+    provider: 'ocf:heartbeat:IPaddr2'
+    options:
+      - 'ip={{ elastic_ip_lb }}'
+      - 'cidr_netmask=32'
+      - 'nic=bond0'
+    op: 'monitor'
+    op_options:
+      - 'interval=8s'
+  - resource_id: 'elastic_ip_metal'
+    action: 'create'
+    provider: 'ocf:equinix:equinix-elastic-ip'
+    options:
+      - 'ip={{ elastic_ip_lb }}'
+      - 'subnet={{ elastic_ip_subnet }}'
+    op: 'monitor'
+    op_options:
+      - 'interval=14s'
+  - resource_id: 'virtual_ip_public'
+    action: 'create'
+    provider: 'ocf:heartbeat:IPaddr2'
+    options:
+      - 'ip={{ elastic_ip_lb_public }}'
+      - 'cidr_netmask=32'
+      - 'nic=bond0'
+    op: 'monitor'
+    op_options:
+      - 'interval=8s'
+  - resource_id: 'elastic_ip_metal_public'
+    action: 'create'
+    provider: 'ocf:equinix:equinix-elastic-ip-public'
+    options:
+      - 'ip={{ elastic_ip_lb_public }}'
+    op: 'monitor'
+    op_options:
+      - 'interval=14s'
+  - resource_id: 'loadbalancer'
+    action: 'create'
+    provider: 'lsb:haproxy'
+    op: 'monitor'
+    op_options:
+      - 'timeout=5s'
+      - 'interval=5s'
+      - 'clone'
+pacemaker_cluster_settings:
+  - property: 'start-failure-is-fatal'
+    value: 'false'
+  - property: 'pe-warn-series-max'
+    value: 1000
+  - property: 'pe-input-series-max'
+    value: 1000
+  - property: 'pe-error-series-max'
+    value: 1000
+  - property: 'cluster-recheck-interval'
+    value: 5min

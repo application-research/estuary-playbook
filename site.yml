@@ -1,43 +1,89 @@
 ---
+- name: Gather special node facts
+  hosts: all
+  become: true
+  gather_facts: false
+  remote_user: root
+
+  tasks:
+    - name: Gather all facts
+      ansible.builtin.setup:
+
+- name: Loadbalancer nodes
+  hosts: loadbalancer
+  become: true
+  remote_user: root
+
+  vars_files:
+    - "vars/secrets.{{ env_name }}.yml"
+
+  roles:
+    - haproxy
+    - {role: equinix_uuid, when: not equinix_uuid | bool}
+    - equinix_elastic_ip
+    - zorlin.pacemaker
+
+- name: Estuary postgres etcd nodes
+  hosts: etcd
+  become: true # Not needed for root but we won't use root later
+  remote_user: root
+
+  roles:
+    - role: zorlin.etcd_cluster
+      etcd_secure: true
+
+- name: Estuary postgres postgres nodes
+  hosts: postgresql
+  become: true # Not needed for root but we won't use root later
+  remote_user: root
+
+  vars_files:
+    - "vars/secrets.{{ env_name }}.yml"
+
+  roles:
+    - patroni_system_user
+    - patroni_certs
+    - role: zorlin.patroni
+
 - name: Install base Estuary requirements
   hosts: estuary
   become: true
 
-  vars_files:
-    - "vars/estuary-settings.yml"
+  tasks:
+    - name: Install build tools and compilers
+      ansible.builtin.package:
+        name: build-essential
+        state: present
 
-  roles:
-    - estuary
+# Disabled temporarily while we deploy to production
+# - name: Install Estuary API node(s)
+#   hosts: estuary_main
+#   become: true
 
-- name: Install Estuary API node(s)
-  hosts: estuary_main
-  become: true
+#   vars_files:
+#     - "vars/secrets.{{ env_name }}.yml"
 
-  vars_files:
-    - "vars/secrets.yml"
-    - "vars/estuary-settings.yml"
-
-  roles:
-    - role: gantsign.golang
-      golang_gopath: '$HOME/workspace-go'
-    - zorlin.rust
-    - role: geerlingguy.postgresql
-      become: true
-      when: install_postgresql
-    - estuary_main
+#   roles:
+#     - role: gantsign.golang
+#       golang_gopath: '$HOME/workspace-go'
+#     - role: zorlin.rust
+#       become_user: "{{ estuary_system_user | default('estuary') }}"
+#     - estuary_main
 
 - name: Install Estuary shuttle nodes
   hosts: estuary_shuttle
   become: true
+  remote_user: root
 
   vars_files:
-    - "vars/secrets.yml"
-    - "vars/estuary-settings.yml"
+    - "vars/secrets.{{ env_name }}.yml"
 
   roles:
+    - estuary_system_user
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
-    - zorlin.rust
+    - role: zorlin.rust
+      become_user: "{{ estuary_system_user | default('estuary') }}"
     - role: geerlingguy.postgresql
       become: true
       when: install_postgresql
@@ -46,9 +92,6 @@
 - name: Install Estuary web node
   hosts: estuary_www
   become: true
-
-  vars_files:
-    - "vars/estuary-settings.yml"
 
   roles:
     - geerlingguy.nodejs

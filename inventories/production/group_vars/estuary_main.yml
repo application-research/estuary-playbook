@@ -1,0 +1,13 @@
+---
+### Database settings ###
+# Enable *one* of the following database_config stanzas to set up database access.
+# SQLite is simplest but less scalable, perfect for evaluating Estuary prior to production setup.
+
+# SQLite mode settings (default)
+#database_config: 'sqlite={{estuary_data}}/estuary.db'
+
+# SQLite mode with a custom storage location for the SQLite database
+#database_config: 'sqlite=/data/sqlite/estuary.db'
+
+# PostgreSQL mode settings
+database_config: 'postgres=host={{ estuary_database_host }} user={{ estuary_database_user }} password={{ estuary_database_password }} dbname={{ estuary_database_name }}'
