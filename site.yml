@@ -12,7 +12,30 @@
   hosts: estuary
   become: true
 
+  roles:
+    - estuary_system_user
+
   tasks:
+    - name: Install prerequisites
+      ansible.builtin.package:
+        name: acl
+        state: present
+
+    - name: Grab info about the Estuary user
+      ansible.builtin.user:
+        name: "{{ estuary_system_user | default('estuary') }}"
+        state: present
+      register: estuary_system_user_info
+      become: true
+
+    - name: Add cargo env to bashrc
+      ansible.builtin.lineinfile:
+        path: "{{ estuary_system_user_info.home }}/.bashrc"
+        line: '. "$HOME/.cargo/env"'
+        state: present
+        insertbefore: "# If not running interactively, don't do anything"
+      become_user: "{{ estuary_system_user | default('estuary') }}"
+
     - name: Install build tools and compilers
       ansible.builtin.package:
         name: build-essential
@@ -39,6 +62,11 @@
         file: "vars/secrets.yml"
       when: vault_password_file.stat.exists
 
+    - name: Install prerequisites
+      ansible.builtin.package:
+        name: acl
+        state: present
+
   roles:
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
@@ -49,7 +77,6 @@
 - name: Install Estuary shuttle nodes
   hosts: estuary_shuttle
   become: true
-  remote_user: root
 
   pre_tasks:
     - name: Check if repo-specific secrets file exists
@@ -68,15 +95,16 @@
         file: "vars/secrets.yml"
       when: vault_password_file.stat.exists
 
+    - name: Install prerequisites
+      ansible.builtin.package:
+        name: acl
+        state: present
+
   roles:
-    - estuary_system_user
     - role: gantsign.golang
       golang_gopath: '$HOME/workspace-go'
     - role: zorlin.rust
       become_user: "{{ estuary_system_user | default('estuary') }}"
-    - role: geerlingguy.postgresql
-      become: true
-      when: install_postgresql
     - estuary_shuttle
 
 - name: Install Estuary web node

@@ -14,3 +14,11 @@
     uid: 1337
     createhome: true
     system: true
+
+- name: Install cargo profile.d script
+  ansible.builtin.template:
+    src: cargo.sh.j2
+    dest: /etc/profile.d/cargo.sh
+    mode: 0755
+    owner: root
+    group: root
