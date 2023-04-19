@@ -1,6 +1,6 @@
 ---
 - name: Gather special node facts
-  hosts: all
+  hosts: estuary
   become: true
   gather_facts: false
   remote_user: root
